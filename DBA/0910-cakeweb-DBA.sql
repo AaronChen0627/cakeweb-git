@@ -1,0 +1,90 @@
+-- 创建 Customers 表
+CREATE TABLE Customers (
+    CustomerId INT AUTO_INCREMENT PRIMARY KEY,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Account VARCHAR(50) UNIQUE NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    Phone VARCHAR(15) NULL,
+    Address VARCHAR(200) NULL,
+    City VARCHAR(100) NULL,
+    State VARCHAR(100) NULL,
+    PostalCode VARCHAR(20) NULL,
+    Country VARCHAR(100) NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 创建 Orders 表
+CREATE TABLE Orders (
+    OrderId INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerId INT,
+    OrderDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ShipDate DATETIME NULL,
+    ShippingAddress VARCHAR(200) NULL,
+    TotalAmount DECIMAL(18, 2) NOT NULL,
+    OrderStatus VARCHAR(50) NOT NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (CustomerId) REFERENCES Customers(CustomerId)
+);
+
+-- 创建 OrderItems 表
+CREATE TABLE OrderItems (
+    OrderItemId INT AUTO_INCREMENT PRIMARY KEY,
+    OrderId INT,
+    ProductId INT,
+    Quantity INT NOT NULL,
+    UnitPrice DECIMAL(18, 2) NOT NULL,
+    TotalPrice DECIMAL(18, 2) GENERATED ALWAYS AS (Quantity * UnitPrice) VIRTUAL,
+    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId),
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId)
+);
+
+-- 创建 Products 表
+CREATE TABLE Products (
+    ProductId INT AUTO_INCREMENT PRIMARY KEY,
+    ProductName VARCHAR(100) NOT NULL,
+    Category VARCHAR(100) NULL,
+    Price DECIMAL(18, 2) NOT NULL,
+    StockQuantity INT NOT NULL,
+    Description TEXT NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 创建 Payments 表
+CREATE TABLE Payments (
+    PaymentId INT AUTO_INCREMENT PRIMARY KEY,
+    OrderId INT,
+    PaymentDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PaymentAmount DECIMAL(18, 2) NOT NULL,
+    PaymentMethod VARCHAR(50) NOT NULL,
+    PaymentStatus VARCHAR(50) NOT NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId)
+);
+
+-- 创建 Shipping 表
+CREATE TABLE Shipping (
+    ShippingId INT AUTO_INCREMENT PRIMARY KEY,
+    OrderId INT,
+    ShippingMethod VARCHAR(100) NOT NULL,
+    TrackingNumber VARCHAR(100) NULL,
+    ShippingCost DECIMAL(18, 2) NOT NULL,
+    ShippedDate DATETIME NULL,
+    DeliveredDate DATETIME NULL,
+    ShippingStatus VARCHAR(50) NOT NULL,
+    CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId)
+);
+
+-- 创建 Customers_login 表
+CREATE TABLE Customers_login (
+    CustomerId INT AUTO_INCREMENT PRIMARY KEY,
+    account VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
